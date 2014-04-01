@@ -9,20 +9,25 @@ package swing;
 import dao.DaoPersonnel;
 import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.JDesktopPane;
+import javax.swing.JInternalFrame;
+import javax.swing.UIManager;
 import metier.Personnel;
 
 /**
  *
  * @author nebelmahi
  */
-public class FrameAdminRemovePersonne extends javax.swing.JFrame {
+public class FrameAdminRemovePersonne extends JInternalFrame {
 
     /**
      * Creates new form FrameAdminRemovePersonne
      */
-    public FrameAdminRemovePersonne() {
+    JDesktopPane d;
+    public FrameAdminRemovePersonne(JDesktopPane d) {
         initComponents();
         initialiserListePersonnel();
+        this.d=d;
     }
 
     /**
@@ -44,7 +49,11 @@ public class FrameAdminRemovePersonne extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setClosable(true);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setIconifiable(true);
+        setMaximizable(true);
+        setResizable(true);
 
         jList1.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -190,7 +199,11 @@ public class FrameAdminRemovePersonne extends javax.swing.JFrame {
   
         DaoPersonnel daoP=new DaoPersonnel();
         Personnel p=(Personnel) jList1.getSelectedValue();
-        new FrameAdminUpdatePersonne(p).setVisible(true);
+        
+        FrameAdminUpdatePersonne frm=new FrameAdminUpdatePersonne(p,d);
+         this.d.add(frm);
+         frm.setVisible(true);
+         dispose();
         
 // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -206,10 +219,13 @@ public class FrameAdminRemovePersonne extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+                
+               UIManager.setLookAndFeel("de.javasoft.plaf.synthetica.SyntheticaSimple2DLookAndFeel"); 
+                
             }
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(FrameAdminRemovePersonne.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
@@ -225,7 +241,7 @@ public class FrameAdminRemovePersonne extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new FrameAdminRemovePersonne().setVisible(true);
+                //new FrameAdminRemovePersonne().setVisible(true);
             }
         });
     }

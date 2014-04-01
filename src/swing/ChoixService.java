@@ -12,6 +12,9 @@ import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
+import javax.swing.JDesktopPane;
+import javax.swing.JInternalFrame;
+import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
@@ -22,13 +25,17 @@ import metier.SousService;
  *
  * @author Mehdi
  */
-public class ChoixService extends javax.swing.JFrame {
+public class ChoixService extends JInternalFrame {
 
     /**
      * Creates new form ChoixService
      */
-    public ChoixService() {
+    JDesktopPane d;
+    CreationTicket c;
+    public ChoixService(JDesktopPane d,CreationTicket c) {
         initComponents();
+        this.d=d;
+        this.c=c;
     }
     
     
@@ -59,7 +66,11 @@ public class ChoixService extends javax.swing.JFrame {
         jTree1 = new javax.swing.JTree();
         btnValider = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setClosable(true);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setIconifiable(true);
+        setMaximizable(true);
+        setResizable(true);
 
         btnObjetsAbandonnes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/ObjetsAbandonnés.png"))); // NOI18N
         btnObjetsAbandonnes.addActionListener(new java.awt.event.ActionListener() {
@@ -425,6 +436,7 @@ public class ChoixService extends javax.swing.JFrame {
     private void btnValiderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnValiderActionPerformed
         // TODO add your handling code here:
         sousService = jTree1.getLastSelectedPathComponent().toString();
+        c.setService(service, sousService);
         System.out.println(sousService);
         dispose();
         
@@ -444,10 +456,12 @@ public class ChoixService extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Windows".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
+//                if ("Windows".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+                UIManager.setLookAndFeel("de.javasoft.plaf.synthetica.SyntheticaSimple2DLookAndFeel");
+                
             }
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(ChoixService.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
@@ -463,7 +477,7 @@ public class ChoixService extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ChoixService().setVisible(true);
+                //new ChoixService(d).setVisible(true);
             }
         });
     }

@@ -8,7 +8,7 @@ package metier;
 
 /**
  *
- * @author s.trari
+ * @author Mehdi
  */
 public class Usager {
  int id;
@@ -37,7 +37,8 @@ public class Usager {
         this.nationalite = nationalite;
     }
 
-    public Usager(int id, String nom, String prenom, String dateDeNaissance, String lieuDeNaissance, String adresse, int code_postal, String ville, String email, String nationalite) {
+    public Usager(int id, String nom, String prenom, String dateDeNaissance, String lieuDeNaissance,
+            String adresse, int code_postal, String ville, String email, String nationalite) {
         this.id = id;
         this.nom = nom;
         this.prenom = prenom;

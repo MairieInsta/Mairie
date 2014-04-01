@@ -6,6 +6,24 @@
 
 package swing;
 
+import dao.DaoPersonnel;
+import dao.DaoTicket;
+import java.awt.Color;
+import java.util.ArrayList;
+import static java.util.Collections.list;
+import java.util.List;
+import javax.swing.UIManager;
+import metier.Personnel;
+import metier.Ticket;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartFrame;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PiePlot3D;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.general.DefaultPieDataset;
+
 /**
  *
  * @author Mehdi
@@ -15,8 +33,27 @@ public class PrincipalMDI extends javax.swing.JFrame {
     /**
      * Creates new form PrincipalMDI
      */
+    
+        DaoTicket dao = new DaoTicket();
+        List<Ticket> list = dao.selectAll();
+        int cptAttente = 0;
+        int cptEnCours = 0;
+        int cptNonAttribue = 0;
+        int cptResolu = 0;
+        int cptATraiter = 0;
+    
+    private Personnel p;
+    public PrincipalMDI(Personnel p) {
+        initComponents();
+           this.setLocationRelativeTo(null);
+           this.p=p;
+    }
+    
     public PrincipalMDI() {
         initComponents();
+           this.setLocationRelativeTo(null);
+           
+           connexionTechnicien();
     }
 
     /**
@@ -29,83 +66,139 @@ public class PrincipalMDI extends javax.swing.JFrame {
     private void initComponents() {
 
         desktopPane = new javax.swing.JDesktopPane();
+        btnResolus = new javax.swing.JButton();
+        btnATraiter = new javax.swing.JButton();
+        btnEnCour = new javax.swing.JButton();
+        btnEnAttente = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
-        fileMenu = new javax.swing.JMenu();
-        openMenuItem = new javax.swing.JMenuItem();
-        saveMenuItem = new javax.swing.JMenuItem();
-        saveAsMenuItem = new javax.swing.JMenuItem();
-        exitMenuItem = new javax.swing.JMenuItem();
-        editMenu = new javax.swing.JMenu();
-        cutMenuItem = new javax.swing.JMenuItem();
-        copyMenuItem = new javax.swing.JMenuItem();
-        pasteMenuItem = new javax.swing.JMenuItem();
-        deleteMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         contentMenuItem = new javax.swing.JMenuItem();
-        aboutMenuItem = new javax.swing.JMenuItem();
+        jMenu1 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem3 = new javax.swing.JMenuItem();
+        jMenuItem4 = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        barMenuItem = new javax.swing.JMenuItem();
+        jMenuItem5 = new javax.swing.JMenuItem();
+        superviseurMenu = new javax.swing.JMenu();
+        jMenuItem6 = new javax.swing.JMenuItem();
+        consulterTicket = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        fileMenu.setMnemonic('f');
-        fileMenu.setText("File");
-
-        openMenuItem.setMnemonic('o');
-        openMenuItem.setText("Open");
-        fileMenu.add(openMenuItem);
-
-        saveMenuItem.setMnemonic('s');
-        saveMenuItem.setText("Save");
-        fileMenu.add(saveMenuItem);
-
-        saveAsMenuItem.setMnemonic('a');
-        saveAsMenuItem.setText("Save As ...");
-        saveAsMenuItem.setDisplayedMnemonicIndex(5);
-        fileMenu.add(saveAsMenuItem);
-
-        exitMenuItem.setMnemonic('x');
-        exitMenuItem.setText("Exit");
-        exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        btnResolus.setBackground(new java.awt.Color(0, 153, 51));
+        btnResolus.setText("Résolus");
+        btnResolus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exitMenuItemActionPerformed(evt);
+                btnResolusActionPerformed(evt);
             }
         });
-        fileMenu.add(exitMenuItem);
 
-        menuBar.add(fileMenu);
+        btnATraiter.setBackground(new java.awt.Color(153, 0, 153));
+        btnATraiter.setText("A traiter");
 
-        editMenu.setMnemonic('e');
-        editMenu.setText("Edit");
+        btnEnCour.setBackground(new java.awt.Color(255, 0, 0));
+        btnEnCour.setText("En cours");
+        btnEnCour.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEnCourActionPerformed(evt);
+            }
+        });
 
-        cutMenuItem.setMnemonic('t');
-        cutMenuItem.setText("Cut");
-        editMenu.add(cutMenuItem);
-
-        copyMenuItem.setMnemonic('y');
-        copyMenuItem.setText("Copy");
-        editMenu.add(copyMenuItem);
-
-        pasteMenuItem.setMnemonic('p');
-        pasteMenuItem.setText("Paste");
-        editMenu.add(pasteMenuItem);
-
-        deleteMenuItem.setMnemonic('d');
-        deleteMenuItem.setText("Delete");
-        editMenu.add(deleteMenuItem);
-
-        menuBar.add(editMenu);
+        btnEnAttente.setBackground(new java.awt.Color(255, 204, 0));
+        btnEnAttente.setText("En attente");
 
         helpMenu.setMnemonic('h');
-        helpMenu.setText("Help");
+        helpMenu.setText("Ticket");
 
         contentMenuItem.setMnemonic('c');
-        contentMenuItem.setText("Contents");
+        contentMenuItem.setText("Creer un Ticket");
+        contentMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                contentMenuItemActionPerformed(evt);
+            }
+        });
         helpMenu.add(contentMenuItem);
 
-        aboutMenuItem.setMnemonic('a');
-        aboutMenuItem.setText("About");
-        helpMenu.add(aboutMenuItem);
-
         menuBar.add(helpMenu);
+
+        jMenu1.setText("Administration");
+
+        jMenuItem1.setText("Inscrire Personnel");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem1);
+
+        jMenuItem2.setText("Supprimer/Modifier Personnel");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem2);
+
+        jMenuItem3.setText("Ajout Service ");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem3);
+
+        jMenuItem4.setText("Ajout Sous service");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem4);
+
+        menuBar.add(jMenu1);
+
+        jMenu2.setText("Stat");
+
+        barMenuItem.setMnemonic('a');
+        barMenuItem.setText("Chart");
+        barMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                barMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu2.add(barMenuItem);
+
+        jMenuItem5.setText("Bar");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem5);
+
+        menuBar.add(jMenu2);
+
+        superviseurMenu.setText("Superviseur");
+
+        jMenuItem6.setText("Stat service");
+        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem6ActionPerformed(evt);
+            }
+        });
+        superviseurMenu.add(jMenuItem6);
+
+        consulterTicket.setText("Consulter ticket");
+        consulterTicket.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                consulterTicketActionPerformed(evt);
+            }
+        });
+        superviseurMenu.add(consulterTicket);
+
+        menuBar.add(superviseurMenu);
 
         setJMenuBar(menuBar);
 
@@ -113,20 +206,189 @@ public class PrincipalMDI extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(desktopPane, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(desktopPane, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(43, 43, 43)
+                .addComponent(btnEnCour, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnEnAttente, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnATraiter, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnResolus, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(665, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(desktopPane, javax.swing.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(40, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnEnCour, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnEnAttente, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnATraiter, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnResolus, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(desktopPane, javax.swing.GroupLayout.PREFERRED_SIZE, 622, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
-        System.exit(0);
-    }//GEN-LAST:event_exitMenuItemActionPerformed
+    private void contentMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_contentMenuItemActionPerformed
+        // TODO add your handling code here:
+        CreationTicket jd=new CreationTicket(desktopPane);
+        this.desktopPane.add(jd);
+        jd.setVisible(true);
+        
+        
+    }//GEN-LAST:event_contentMenuItemActionPerformed
 
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:
+         FrameAdminInsertPersonne insert=new FrameAdminInsertPersonne();
+        this.desktopPane.add(insert);
+        insert.setVisible(true);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        // TODO add your handling code here:
+         FrameAdminRemovePersonne rmv=new FrameAdminRemovePersonne(desktopPane);
+        this.desktopPane.add(rmv);
+        rmv.setVisible(true);
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        // TODO add your handling code here:
+        CreerService cs = new CreerService();
+        this.desktopPane.add(cs);
+        cs.setVisible(true);
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        // TODO add your handling code here:
+        CreerSousService css = new CreerSousService();
+        this.desktopPane.add(css);
+        css.setVisible(true);
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
+
+    private void barMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_barMenuItemActionPerformed
+        // TODO add your handling code here:
+        DefaultPieDataset pieDataSet = new DefaultPieDataset();
+        pieDataSet.setValue("En attente", cptAttente);
+        pieDataSet.setValue("En cours", cptEnCours);
+        pieDataSet.setValue("Non attribué", cptNonAttribue);
+        pieDataSet.setValue("Resolu", cptResolu);
+        pieDataSet.setValue("A traiter", cptATraiter);
+        
+        JFreeChart chart = ChartFactory.createPieChart3D("Camembert",pieDataSet,true,true,true);
+        PiePlot3D p = (PiePlot3D)chart.getPlot();
+        //p.setForegroundAlpha(TOP_ALIGNMENT);
+        ChartFrame frame = new ChartFrame("camembert",chart);
+        frame.setVisible(true);
+        frame.setSize(600,500);
+    }//GEN-LAST:event_barMenuItemActionPerformed
+
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        // TODO add your handling code here:
+        
+        DefaultCategoryDataset barDataSet = new DefaultCategoryDataset();
+        barDataSet.setValue(cptAttente,"ticket", "En attente");
+        barDataSet.setValue(cptEnCours,"ticket", "En cours");
+        barDataSet.setValue(cptNonAttribue,"ticket", "Non attribué");
+        barDataSet.setValue(cptResolu,"ticket", "Resolu");
+        barDataSet.setValue(cptATraiter,"ticket", "A traiter");
+        JFreeChart chart = ChartFactory.createBarChart3D("Camembert","Bar","Ticket",
+                                        barDataSet,PlotOrientation.VERTICAL,false,true,false);
+        
+        CategoryPlot plot = chart.getCategoryPlot();
+        plot.setRangeGridlinePaint(Color.blue);
+        ChartFrame frame = new ChartFrame("Bar",chart);
+        frame.setVisible(true);
+        frame.setSize(600,500);
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
+
+    private void btnResolusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResolusActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_btnResolusActionPerformed
+    
+    
+    // Stat du service
+    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+        // TODO add your handling code here:
+        
+        List<Ticket> serviceList = new ArrayList<>();
+        
+        
+        
+        
+        for(Ticket t : list){
+            System.out.println(t.getSousService().getNom());
+            if(t.getSousService().getNom().equals("Malpropreté")){
+                serviceList.add(t);
+            }     
+        }
+        
+        DefaultPieDataset pieDataSet = new DefaultPieDataset();
+        
+        for(Ticket ticket : serviceList){
+            pieDataSet.setValue(ticket.getSousService().getNom(),1);
+        }
+        
+        
+        JFreeChart chart = ChartFactory.createPieChart3D("Camembert",pieDataSet,true,true,true);
+        PiePlot3D p = (PiePlot3D)chart.getPlot();
+        //p.setForegroundAlpha(TOP_ALIGNMENT);
+        ChartFrame frame = new ChartFrame("camembert",chart);
+        frame.setVisible(true);
+        frame.setSize(600,500);
+        
+    }//GEN-LAST:event_jMenuItem6ActionPerformed
+
+    private void consulterTicketActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_consulterTicketActionPerformed
+        // TODO add your handling code here:
+        SuperviseurTicket supTicket=new SuperviseurTicket(desktopPane);
+        this.desktopPane.add(supTicket);
+        supTicket.setVisible(true);
+    }//GEN-LAST:event_consulterTicketActionPerformed
+
+    private void btnEnCourActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnCourActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_btnEnCourActionPerformed
+    
+    public void connexionTechnicien(){
+        DaoPersonnel daoP = new DaoPersonnel();
+        int cptTicket = 0;
+        for(Ticket t : list){
+            if(t.getEtatDemande().equals("En attente")){
+               cptAttente++; 
+            }
+            if(t.getEtatDemande().equals("En cours")){
+               cptEnCours++; 
+            }
+            if(t.getEtatDemande().equals("Non attribué")){
+               cptNonAttribue++; 
+            }
+            if(t.getEtatDemande().equals("Resolu")){
+               cptResolu++; 
+            }
+            if(t.getEtatDemande().equals("A traiter")){
+               cptATraiter++; 
+            }
+        }
+        
+        btnResolus.setText("Resolus "  + cptResolu);
+        btnATraiter.setText("A traiter "  + cptAttente);
+        btnEnCour.setText("En cours "  + cptEnCours);
+        btnEnAttente.setText("En attente " + cptAttente);
+        
+        
+        //jMenu1.setEnabled(false);
+        
+    }
+    
+    
     /**
      * @param args the command line arguments
      */
@@ -138,10 +400,13 @@ public class PrincipalMDI extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+                
+                UIManager.setLookAndFeel("de.javasoft.plaf.synthetica.SyntheticaSimple2DLookAndFeel");
+                
             }
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(PrincipalMDI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
@@ -163,21 +428,25 @@ public class PrincipalMDI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem aboutMenuItem;
+    private javax.swing.JMenuItem barMenuItem;
+    private javax.swing.JButton btnATraiter;
+    private javax.swing.JButton btnEnAttente;
+    private javax.swing.JButton btnEnCour;
+    private javax.swing.JButton btnResolus;
+    private javax.swing.JMenuItem consulterTicket;
     private javax.swing.JMenuItem contentMenuItem;
-    private javax.swing.JMenuItem copyMenuItem;
-    private javax.swing.JMenuItem cutMenuItem;
-    private javax.swing.JMenuItem deleteMenuItem;
     private javax.swing.JDesktopPane desktopPane;
-    private javax.swing.JMenu editMenu;
-    private javax.swing.JMenuItem exitMenuItem;
-    private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItem5;
+    private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuBar menuBar;
-    private javax.swing.JMenuItem openMenuItem;
-    private javax.swing.JMenuItem pasteMenuItem;
-    private javax.swing.JMenuItem saveAsMenuItem;
-    private javax.swing.JMenuItem saveMenuItem;
+    private javax.swing.JMenu superviseurMenu;
     // End of variables declaration//GEN-END:variables
 
 }

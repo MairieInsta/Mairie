@@ -6,19 +6,54 @@
 
 package swing;
 
+import dao.DaoSousService;
+import dao.DaoTicket;
+import dao.DaoUsager;
+import java.awt.Color;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import javax.swing.JDesktopPane;
+import javax.swing.JInternalFrame;
 import javax.swing.UIManager;
+import metier.SousService;
+import metier.Ticket;
+import metier.Usager;
 
 /**
  *
  * @author Mehdi
  */
-public class CreationTicket extends javax.swing.JFrame {
+public class CreationTicket extends JInternalFrame {
 
     /**
      * Creates new form CreationTicket
      */
-    public CreationTicket() {
+    JDesktopPane d;
+    public CreationTicket(JDesktopPane d) {
         initComponents();
+        lblUtilisateurPasInscrit.setVisible(false);
+        btnInscrireUser.setVisible(false);
+        btnInscrireUser.setEnabled(false);
+        this.d=d;
+    }
+    
+    public void testInscription(){
+        DaoUsager dao = new DaoUsager();
+        btnInscrireUser.setEnabled(false);
+        if(dao.selectByEmail(tfDemandeur.getText()) == null){
+            tfDemandeur.setBackground(Color.red);
+            lblUtilisateurPasInscrit.setVisible(true);
+            btnInscrireUser.setEnabled(true);
+            btnInscrireUser.setVisible(true);
+        }else{
+            tfDemandeur.setBackground(Color.green);
+            
+        }
+    }
+    
+    public void setService(String service, String sousService){
+        tfService.setText(service);
+        tfSousService.setText(sousService);
     }
 
     /**
@@ -33,10 +68,7 @@ public class CreationTicket extends javax.swing.JFrame {
         jLabel11 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         tfDemandeur = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
-        boxType = new javax.swing.JComboBox();
-        boxTech = new javax.swing.JComboBox();
-        jLabel3 = new javax.swing.JLabel();
+        lblUtilisateurPasInscrit = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
@@ -51,15 +83,22 @@ public class CreationTicket extends javax.swing.JFrame {
         jLabel10 = new javax.swing.JLabel();
         boxPriorite = new javax.swing.JComboBox();
         jLabel12 = new javax.swing.JLabel();
-        jDateChooser2 = new com.toedter.calendar.JDateChooser();
+        chooseDateEstimee = new com.toedter.calendar.JDateChooser();
         tfService = new javax.swing.JTextField();
         tfSousService = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jLabel13 = new javax.swing.JLabel();
+        btnInscrireUser = new javax.swing.JButton();
+        jToggleButton1 = new javax.swing.JToggleButton();
+        lblOKCREATION = new javax.swing.JLabel();
 
         jLabel11.setText("jLabel11");
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setClosable(true);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setIconifiable(true);
+        setMaximizable(true);
+        setResizable(true);
 
         jLabel1.setText("Demandeur");
 
@@ -68,14 +107,13 @@ public class CreationTicket extends javax.swing.JFrame {
                 tfDemandeurActionPerformed(evt);
             }
         });
+        tfDemandeur.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                tfDemandeurFocusLost(evt);
+            }
+        });
 
-        jLabel2.setText("Type");
-
-        boxType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        boxTech.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jLabel3.setText("Technicien");
+        lblUtilisateurPasInscrit.setText("L'utilisateur n'est pas inscrit");
 
         jLabel4.setText("Service");
 
@@ -85,7 +123,7 @@ public class CreationTicket extends javax.swing.JFrame {
 
         jLabel7.setText("Etat");
 
-        boxEtat.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        boxEtat.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "En attente" }));
 
         jLabel8.setText("Titre");
 
@@ -97,13 +135,27 @@ public class CreationTicket extends javax.swing.JFrame {
 
         jLabel10.setText("Priorite");
 
-        boxPriorite.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        boxPriorite.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Trés Basse", "Basse", "Moyenne", "Haute", "Urgente" }));
 
         jLabel12.setText("Date de resolution estimée");
 
         jButton1.setText("Choix Service");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jLabel13.setText("Selectionner le service");
+
+        btnInscrireUser.setText("Inscrire");
+
+        jToggleButton1.setText("Valider");
+        jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jToggleButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -113,35 +165,32 @@ public class CreationTicket extends javax.swing.JFrame {
                 .addGap(23, 23, 23)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblUtilisateurPasInscrit, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel13, javax.swing.GroupLayout.Alignment.LEADING))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addComponent(tfDemandeur, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(calendarCreation, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(boxType, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(boxTech, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(boxEtat, 0, 202, Short.MAX_VALUE)
-                            .addComponent(tfService)
-                            .addComponent(tfSousService))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 99, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnInscrireUser)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(boxEtat, 0, 202, Short.MAX_VALUE)
+                                .addComponent(tfService)
+                                .addComponent(tfSousService)
+                                .addComponent(tfDemandeur, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 96, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel12)
                         .addGap(18, 18, 18)
-                        .addComponent(jDateChooser2, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(chooseDateEstimee, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -160,6 +209,12 @@ public class CreationTicket extends javax.swing.JFrame {
                             .addComponent(tfTitre, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(60, 60, 60)))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblOKCREATION, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(32, 32, 32)
+                .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -177,13 +232,9 @@ public class CreationTicket extends javax.swing.JFrame {
                         .addGap(1, 1, 1))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(boxType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel9))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(boxTech, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3))
+                            .addComponent(lblUtilisateurPasInscrit)
+                            .addComponent(jLabel9)
+                            .addComponent(btnInscrireUser))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButton1)
@@ -200,9 +251,12 @@ public class CreationTicket extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel6)
-                            .addComponent(calendarCreation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(calendarCreation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addGap(32, 32, 32)))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(boxEtat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel7)))
@@ -216,8 +270,12 @@ public class CreationTicket extends javax.swing.JFrame {
                                 .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(28, 28, 28)
-                                .addComponent(jDateChooser2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(27, Short.MAX_VALUE))
+                                .addComponent(chooseDateEstimee, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblOKCREATION))
+                .addContainerGap())
         );
 
         pack();
@@ -226,6 +284,45 @@ public class CreationTicket extends javax.swing.JFrame {
     private void tfDemandeurActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfDemandeurActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_tfDemandeurActionPerformed
+
+    private void tfDemandeurFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfDemandeurFocusLost
+        // TODO add your handling code here:
+        testInscription();
+    }//GEN-LAST:event_tfDemandeurFocusLost
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        ChoixService jd=new ChoixService(d,this);
+        this.d.add(jd);
+        jd.setVisible(true);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
+        // TODO add your handling code here:
+        GregorianCalendar g = new GregorianCalendar();
+        int jour = g.get(GregorianCalendar.DAY_OF_MONTH);
+        int mois = g.get(GregorianCalendar.MONTH) + 1;
+        int annee = g.get(GregorianCalendar.YEAR);
+        String dateCourante = jour + "/" + mois + "/" + annee;
+        DaoUsager daoUsager = new DaoUsager();
+        Usager usager = daoUsager.selectByEmail(tfDemandeur.getText());
+        DaoSousService daoSS = new DaoSousService();
+        SousService ss = daoSS.selectByName(tfSousService.getText());
+        String etatDemande = boxEtat.getSelectedItem().toString();
+        String description = tfDescription.getText();
+        String titre = tfTitre.getText();
+        Date date = chooseDateEstimee.getDate();
+        
+        String dateEstimee = String.format("%1$td/%1$tm/%1$tY", date);
+        String priorite = boxPriorite.getSelectedItem().toString();
+        
+        System.out.println(ss.getNom());
+        
+        Ticket ticket = new Ticket(ss,usager,null,dateCourante,etatDemande,description,titre,null,dateEstimee,priorite);
+        DaoTicket daoTicket = new DaoTicket();
+        daoTicket.insert(ticket);
+        lblOKCREATION.setText("le ticket a bien été transmis au service concerné");
+    }//GEN-LAST:event_jToggleButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -259,7 +356,7 @@ public class CreationTicket extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CreationTicket().setVisible(true);
+                //new CreationTicket().setVisible(true);
             }
         });
     }
@@ -267,18 +364,15 @@ public class CreationTicket extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox boxEtat;
     private javax.swing.JComboBox boxPriorite;
-    private javax.swing.JComboBox boxTech;
-    private javax.swing.JComboBox boxType;
+    private javax.swing.JButton btnInscrireUser;
     private com.toedter.calendar.JDateChooser calendarCreation;
+    private com.toedter.calendar.JDateChooser chooseDateEstimee;
     private javax.swing.JButton jButton1;
-    private com.toedter.calendar.JDateChooser jDateChooser2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -286,6 +380,9 @@ public class CreationTicket extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JToggleButton jToggleButton1;
+    private javax.swing.JLabel lblOKCREATION;
+    private javax.swing.JLabel lblUtilisateurPasInscrit;
     private javax.swing.JTextField tfDemandeur;
     private javax.swing.JTextArea tfDescription;
     private javax.swing.JTextField tfService;

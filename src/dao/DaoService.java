@@ -101,6 +101,33 @@ public class DaoService implements IDao<Service> {
         }
         return s;
     }
+    
+    
+        public Service selectById(int id) {
+        Service s = null;
+        Connection cnx = null;
+        try {
+            cnx = bdd.seConnecter();
+
+            String sql = "select * from services where id_service= ?";
+            PreparedStatement stat = cnx.prepareStatement(sql);
+            stat.setInt(1, id);
+            ResultSet res = stat.executeQuery();
+            
+            while (res.next()) {
+                s = new Service(res.getInt("ID_SERVICE"),
+                                  res.getString("NOM_SERVICE"));
+            }
+
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DaoService.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(DaoService.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            bdd.seDeconnecter(cnx);
+        }
+        return s;
+    }
 
     @Override
     public void update(Service objet) {

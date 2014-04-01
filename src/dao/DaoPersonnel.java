@@ -17,10 +17,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import metier.Personnel;
+import metier.Usager;
 
 /**
  *
- * @author nebelmahi
+ * @author Mehdi
  */
 public class DaoPersonnel implements IDao<Personnel>{
 
@@ -106,7 +107,38 @@ public class DaoPersonnel implements IDao<Personnel>{
     }
 
         public Personnel selectById(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                Personnel p = null;
+        Connection cnx = null;
+        try {
+            cnx = bdd.seConnecter();
+
+            String sql = "select * from usager where ID_USAGER= ?";
+            PreparedStatement stat = cnx.prepareStatement(sql);
+            stat.setInt(1, id);
+            ResultSet res = stat.executeQuery();
+            
+            while (res.next()) {
+                p = new Personnel(res.getInt("ID_PERSONNEL"),
+                               res.getInt("ID_SERVICE"),
+                               res.getString("NOM"),
+                               res.getString("PRENOM"),
+                               res.getString("DATE_DE_NAISSANCE"),
+                               res.getString("EMAIL"),
+                               res.getString("PASSWORD"),
+                               res.getString("ADRESSE"),
+                               res.getString("CODE_POSTAL"),
+                               res.getString("VILLE"),
+                               res.getString("STATUT"));
+            }
+
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DaoPersonnel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(DaoPersonnel.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            bdd.seDeconnecter(cnx);
+        }
+        return p;
     }
 
     @Override
@@ -122,7 +154,17 @@ public class DaoPersonnel implements IDao<Personnel>{
             ResultSet res = stat.executeQuery(sql);
 
             while (res.next()) {
-                Personnel p = new Personnel(res.getInt("id_user"),res.getString("nom"), res.getString("prenom"),res.getString("date_de_naissance"),res.getString("email"),res.getString("adresse"),res.getString("code_postal"),res.getString("ville"),res.getString("statut"));
+                Personnel p = new Personnel(res.getInt("id_user"),
+                            res.getInt("id_service"),
+                            res.getString("nom"), 
+                            res.getString("prenom"),
+                            res.getString("date_de_naissance"),
+                            res.getString("email"),
+                            res.getString("password"),
+                            res.getString("adresse"),
+                            res.getString("code_postal"),
+                            res.getString("ville"),
+                            res.getString("statut"));
                 l.add(p);
             }
 

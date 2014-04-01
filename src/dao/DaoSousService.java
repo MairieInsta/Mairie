@@ -47,24 +47,49 @@ public class DaoSousService implements IDao<SousService> {
         
     }
     
-    public Service selectById(int id) {
-          Service s=null;
+   public SousService selectById(int id) {
+          SousService s=null;
         try {
         
             Connection con=bdd.seConnecter();
-            String requete="select * from services where id_service="+id;
+            String requete="select * from sous_service where id_sous_service="+id;
             Statement stat=con.createStatement();
             ResultSet res=stat.executeQuery(requete);
-            res.first();
-            System.out.println(res.getString("NOM_SERVICE"));
-            s=new Service(res.getString("NOM_SERVICE"));
+            while(res.next()){
+            s=new SousService(res.getInt("ID_SOUS_SERVICE"),res.getInt("ID_SERVICE"),res.getString("TITRE"));
+            }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DaoService.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(DaoService.class.getName()).log(Level.SEVERE, null, ex);
         }
          return s;
-    }    
+    } 
+    
+
+        public SousService selectByName(String name) {
+          SousService s=null;
+            Connection con = null;
+        try {
+        
+            con=bdd.seConnecter();
+            String sql="select * from sous_service where TITRE=?";
+            
+            PreparedStatement stat = con.prepareStatement(sql);
+            stat.setString(1,name);
+            ResultSet res=stat.executeQuery();
+            while(res.next()){
+            s=new SousService(res.getInt("ID_SOUS_SERVICE"),
+                              res.getInt("ID_SERVICE"),
+                                res.getString("TITRE"));
+            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DaoSousService.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(DaoSousService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+         return s;
+    } 
     
              public List<SousService> selectAllSousServices(int idService) {
         List<SousService> l = new ArrayList();
@@ -101,7 +126,30 @@ public class DaoSousService implements IDao<SousService> {
 
     @Override
     public List<SousService> selectAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<SousService> l = new ArrayList();
+        Connection cnx = null;
+        try {
+            cnx = bdd.seConnecter();
+
+            String sql = "select * from sous_service";
+            Statement stat = cnx.createStatement();
+            ResultSet res = stat.executeQuery(sql);
+
+            while (res.next()) {
+                SousService service = new SousService(res.getInt("ID_SOUS_SERVICE"),
+                                    res.getInt("ID_SERVICE"),
+                                  res.getString("TITRE"));
+                l.add(service);
+            }
+
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DaoSousService.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(DaoSousService.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            bdd.seDeconnecter(cnx);
+        }
+        return l;
     }
 
     @Override

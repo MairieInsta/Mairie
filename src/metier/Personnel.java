@@ -33,19 +33,23 @@ public class Personnel {
         this.prenom = prenom;
     }
 
-    public Personnel(int id,String nom, String prenom, String dateNais, String email, String codePostale, String adresse, String ville, String statut) {
+    public Personnel(int id,int idService,String nom, String prenom, String dateNais, String email,String password, 
+                String codePostale, String adresse, String ville, String statut) {
         this.id=id;
+        this.idService=idService;
         this.nom = nom;
         this.prenom = prenom;
         this.dateNais = dateNais;
         this.email = email;
+        this.password =password;
         this.codePostale = codePostale;
         this.adresse = adresse;
         this.ville = ville;
         this.statut = statut;
     }
 
-    public Personnel(String nom, String prenom, String dateNais, String email, String password, String codePostale, String adresse, String ville, String statut, int idService) {
+    public Personnel(String nom, String prenom, String dateNais, String email, String password, String codePostale,
+                       String adresse, String ville, String statut, int idService) {
         this.nom = nom;
         this.prenom = prenom;
         this.dateNais = dateNais;
@@ -57,6 +61,8 @@ public class Personnel {
         this.statut = statut;
         this.idService = idService;
     }
+    
+    
 
     public int getId() {
         return id;

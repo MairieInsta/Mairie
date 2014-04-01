@@ -7,6 +7,9 @@
 package swing;
 
 import dao.DaoPersonnel;
+import java.awt.Desktop;
+import javax.swing.JDesktopPane;
+import javax.swing.JInternalFrame;
 import javax.swing.UIManager;
 import metier.Personnel;
 
@@ -14,16 +17,18 @@ import metier.Personnel;
  *
  * @author nebelmahi
  */
-public class FrameAdminUpdatePersonne extends javax.swing.JFrame {
+public class FrameAdminUpdatePersonne extends JInternalFrame {
 
     /**
      * Creates new form FrameAdminUpdatePersonne
      */
+    JDesktopPane d;
     Personnel p;
-    public FrameAdminUpdatePersonne(Personnel p) {
+    public FrameAdminUpdatePersonne(Personnel p,JDesktopPane d) {
         initComponents();
         initialiserParametres(p);
         setVisible(true);
+        this.d=d;
     }
 
     
@@ -197,6 +202,11 @@ public class FrameAdminUpdatePersonne extends javax.swing.JFrame {
    
           DaoPersonnel daoP =new DaoPersonnel();
          daoP.update(p2);
+         dispose();
+         FrameAdminRemovePersonne frm=new FrameAdminRemovePersonne(d);
+         this.d.add(frm);
+         frm.setVisible(true);
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -214,7 +224,7 @@ public class FrameAdminUpdatePersonne extends javax.swing.JFrame {
 //                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
 //                    break;
 //                }
-                UIManager.setLookAndFeel("com.jtattoo.plaf.acryl.AcrylLookAndFeel");
+                UIManager.setLookAndFeel("de.javasoft.plaf.synthetica.SyntheticaSimple2DLookAndFeel");
             }
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(FrameAdminUpdatePersonne.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
